@@ -15,11 +15,51 @@ import java.util.Map;
 public class ServerUtil {
     private static final String TAG = ServerUtil.class.getSimpleName();
 
-    private final static String BASE_URL = "http://192.168.20.67:8080/tje/"; // 라이브서버
+    private final static String BASE_URL = "http://192.168.20.13:8080/tje/"; // 라이브서버
 
     public interface JsonResponseHandler {
         void onResponse(JSONObject json);
     }
+
+    public static void getTeacherNameByLectureId(final Context context, final int lectureId, final JsonResponseHandler handler) {
+        String url = BASE_URL + "get_teacher_name_by_lecture_id";
+        //		String registrationId = ContextUtil.getRegistrationId(context);
+
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("lecture_id", lectureId +"");
+        AsyncHttpRequest.get(context, url, data, true, new AsyncHttpRequest.HttpResponseHandler() {
+
+            @Override
+            public boolean onPrepare() {
+                return true;
+            }
+
+            @Override
+            public void onResponse(String response) {
+                System.out.println(response);
+                try {
+                    JSONObject json = new JSONObject(response);
+
+                    if (handler != null)
+                        handler.onResponse(json);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+
+            @Override
+            public void onCancelled() {
+
+            }
+
+        });
+    }
+
 
 
     public static void getStudentByLectureId(final Context context, final int lectureId, final JsonResponseHandler handler) {
